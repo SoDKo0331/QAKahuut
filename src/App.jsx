@@ -123,9 +123,9 @@ const App = () => {
           Midnight<br/>Sessions
         </h1>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', fontSize: '1.1rem', padding: '0 20px', lineHeight: 1.6 }}>
-          Step into the lounge, grab a drink, and test your knowledge of music history. Let the groove pull you in.
+        DOUBLE BASS<br/>QUIZ
         </p>
-        <button className="btn-premium" onClick={handleStart}>Take a Seat</button>
+        <button className="btn-premium" onClick={handleStart}>START</button>
       </div>
     </div>
   );
