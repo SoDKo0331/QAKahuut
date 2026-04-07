@@ -185,7 +185,7 @@ const App = () => {
         <h1 style={{ fontSize: '2.5rem', margin: '1rem 0', color: 'var(--accent-gold)' }}>Final Applause</h1>
         <div style={{ 
           fontSize: '4.5rem', 
-          fontFamily: 'Playfair Display',
+          fontFamily: 'Noto Serif',
           color: 'var(--text-primary)',
           margin: '1.5rem 0',
           textShadow: '0 0 30px rgba(212, 175, 55, 0.3)'
