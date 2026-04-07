@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { questions } from './data/questions';
+import fallbackImage from './assets/jazz_album.png';
 import './index.css';
 
 // --- Custom Hooks ---
@@ -61,21 +62,49 @@ const AnswerButton = React.memo(({ option, index, status, onClick, disabled }) =
 
 // --- Main Application ---
 
+const QUIZ_STATE_KEY = 'qakahuut.quizState.v1';
+const QUIZ_BEST_SCORE_KEY = 'qakahuut.bestScore.v1';
+
+const getStoredQuizState = () => {
+  try {
+    const raw = localStorage.getItem(QUIZ_STATE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    if (!['START', 'PLAYING', 'RESULT'].includes(parsed.gameState)) return null;
+    if (!Number.isInteger(parsed.currentIdx) || parsed.currentIdx < 0 || parsed.currentIdx >= questions.length) return null;
+    if (!Number.isInteger(parsed.score) || parsed.score < 0 || parsed.score > questions.length) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
 const App = () => {
-  const [gameState, setGameState] = useState('START'); // START, PLAYING, RESULT
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [score, setScore] = useState(0);
+  const storedState = getStoredQuizState();
+  const [gameState, setGameState] = useState(storedState?.gameState || 'START'); // START, PLAYING, RESULT
+  const [currentIdx, setCurrentIdx] = useState(storedState?.currentIdx || 0);
+  const [score, setScore] = useState(storedState?.score || 0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [answerStatus, setAnswerStatus] = useState(null); // null, 'correct', 'wrong'
   const [isLoading, setIsLoading] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [hasImageError, setHasImageError] = useState(false);
+  const [hasSavedSession] = useState(!!storedState && (storedState.currentIdx > 0 || storedState.score > 0 || storedState.gameState !== 'START'));
+  const [bestScore, setBestScore] = useState(() => {
+    const raw = localStorage.getItem(QUIZ_BEST_SCORE_KEY);
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+  });
   const bgMusicRef = useRef(null);
+  const nextQuestionTimeoutRef = useRef(null);
+  const transitionTimeoutRef = useRef(null);
   
   const { playSFX } = useAudio();
   const currentQuestion = useMemo(() => questions[currentIdx], [currentIdx]);
 
   useEffect(() => {
-    const music = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=lofi-study-112191.mp3');
+    const music = new Audio('https://cdn.pixabay.com/download/audio/2022/10/25/audio_946f59a5f1.mp3?filename=jazz-frenchy-street-126246.mp3');
     music.loop = true;
     music.volume = 0.2;
     bgMusicRef.current = music;
@@ -85,6 +114,37 @@ const App = () => {
       music.currentTime = 0;
     };
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (nextQuestionTimeoutRef.current) clearTimeout(nextQuestionTimeoutRef.current);
+      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    setHasImageError(false);
+  }, [currentIdx]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(QUIZ_STATE_KEY, JSON.stringify({ gameState, currentIdx, score }));
+    } catch {
+      // Ignore storage errors in private mode or restricted browsers.
+    }
+  }, [gameState, currentIdx, score]);
+
+  useEffect(() => {
+    if (gameState !== 'RESULT') return;
+    if (score <= bestScore) return;
+
+    setBestScore(score);
+    try {
+      localStorage.setItem(QUIZ_BEST_SCORE_KEY, String(score));
+    } catch {
+      // Ignore storage failures; app still works.
+    }
+  }, [gameState, score, bestScore]);
 
   // Pre-load logic for next image
   useEffect(() => {
@@ -108,6 +168,18 @@ const App = () => {
     setAnswerStatus(null);
   };
 
+  const handleContinue = () => {
+    playSFX('click');
+    if (bgMusicRef.current && !isMusicPlaying) {
+      bgMusicRef.current.play()
+        .then(() => setIsMusicPlaying(true))
+        .catch(() => setIsMusicPlaying(false));
+    }
+    setGameState('PLAYING');
+    setSelectedAnswer(null);
+    setAnswerStatus(null);
+  };
+
   const toggleMusic = () => {
     if (!bgMusicRef.current) return;
 
@@ -123,7 +195,7 @@ const App = () => {
   };
 
   const handleAnswer = (index) => {
-    if (answerStatus) return;
+    if (answerStatus || !currentQuestion) return;
     
     setSelectedAnswer(index);
     const isCorrect = index === currentQuestion.answer;
@@ -133,10 +205,10 @@ const App = () => {
     if (isCorrect) setScore(prev => prev + 1);
 
     // Smooth transition to next question
-    setTimeout(() => {
+    nextQuestionTimeoutRef.current = setTimeout(() => {
       if (currentIdx < questions.length - 1) {
         setIsLoading(true);
-        setTimeout(() => {
+        transitionTimeoutRef.current = setTimeout(() => {
           setCurrentIdx(prev => prev + 1);
           setAnswerStatus(null);
           setSelectedAnswer(null);
@@ -158,6 +230,11 @@ const App = () => {
         <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', fontSize: '1.1rem', padding: '0 20px', lineHeight: 1.6 }}>
         DOUBLE BASS<br/>QUIZ
         </p>
+        {hasSavedSession && (
+          <button className="btn-music result-music" onClick={handleContinue}>
+            CONTINUE LAST SESSION
+          </button>
+        )}
         <button className="btn-premium" onClick={handleStart}>START</button>
       </div>
     </div>
@@ -178,13 +255,14 @@ const App = () => {
           </div>
         </div>
 
-        {currentQuestion.image && (
+        {currentQuestion?.image && (
           <div className="art-container">
             <img 
-              src={currentQuestion.image} 
+              src={hasImageError ? fallbackImage : currentQuestion.image}
               alt="clue" 
               className={`art-image ${answerStatus ? 'paused' : ''}`}
               loading="lazy"
+              onError={() => setHasImageError(true)}
             />
           </div>
         )}
@@ -246,6 +324,9 @@ const App = () => {
         }}>
           {score} <span style={{fontSize: '2rem', color: 'var(--text-secondary)'}}>/ {questions.length}</span>
         </div>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.95rem' }}>
+          Best score (local): {bestScore}/{questions.length}
+        </p>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '3rem', fontSize: '1.1rem', lineHeight: 1.6 }}>
           {score === questions.length ? "A flawless performance. You lead the band tonight." : "A solid groove. Stick around for the next set."}
         </p>
