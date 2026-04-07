@@ -227,6 +227,27 @@ h1, h2, h3, .serif-text {
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
 }
 
+.btn-music {
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--accent-gold);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-music:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.result-music {
+  margin-top: 12px;
+  width: 100%;
+}
+
 /* Fun Fact Box */
 .fact-box {
   margin-top: 28px;

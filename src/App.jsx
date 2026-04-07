@@ -68,9 +68,23 @@ const App = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [answerStatus, setAnswerStatus] = useState(null); // null, 'correct', 'wrong'
   const [isLoading, setIsLoading] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const bgMusicRef = useRef(null);
   
   const { playSFX } = useAudio();
   const currentQuestion = useMemo(() => questions[currentIdx], [currentIdx]);
+
+  useEffect(() => {
+    const music = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=lofi-study-112191.mp3');
+    music.loop = true;
+    music.volume = 0.2;
+    bgMusicRef.current = music;
+
+    return () => {
+      music.pause();
+      music.currentTime = 0;
+    };
+  }, []);
 
   // Pre-load logic for next image
   useEffect(() => {
@@ -82,11 +96,30 @@ const App = () => {
 
   const handleStart = () => {
     playSFX('click');
+    if (bgMusicRef.current && !isMusicPlaying) {
+      bgMusicRef.current.play()
+        .then(() => setIsMusicPlaying(true))
+        .catch(() => setIsMusicPlaying(false));
+    }
     setGameState('PLAYING');
     setCurrentIdx(0);
     setScore(0);
     setSelectedAnswer(null);
     setAnswerStatus(null);
+  };
+
+  const toggleMusic = () => {
+    if (!bgMusicRef.current) return;
+
+    if (isMusicPlaying) {
+      bgMusicRef.current.pause();
+      setIsMusicPlaying(false);
+      return;
+    }
+
+    bgMusicRef.current.play()
+      .then(() => setIsMusicPlaying(true))
+      .catch(() => setIsMusicPlaying(false));
   };
 
   const handleAnswer = (index) => {
@@ -137,7 +170,12 @@ const App = () => {
       <div className={`glass-card ${isLoading ? 'question-exit' : 'question-enter'}`}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
           <div className="badge" style={{ marginBottom: 0 }}>Set {currentIdx + 1}</div>
-          <div style={{ color: 'var(--accent-gold)', fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>Score: {score}</div>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div style={{ color: 'var(--accent-gold)', fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>Score: {score}</div>
+            <button className="btn-music" onClick={toggleMusic}>
+              {isMusicPlaying ? 'Pause Music' : 'Play Music'}
+            </button>
+          </div>
         </div>
 
         {currentQuestion.image && (
@@ -212,6 +250,9 @@ const App = () => {
           {score === questions.length ? "A flawless performance. You lead the band tonight." : "A solid groove. Stick around for the next set."}
         </p>
         <button className="btn-premium" onClick={handleStart}>Encore</button>
+        <button className="btn-music result-music" onClick={toggleMusic}>
+          {isMusicPlaying ? 'Pause Music' : 'Play Music'}
+        </button>
       </div>
     </div>
   );
