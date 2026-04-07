@@ -54,6 +54,7 @@ const AnswerButton = React.memo(({ option, index, status, onClick, disabled }) =
     >
       <span>{option}</span>
       {status === 'correct' && <span style={{ fontFamily: 'sans-serif' }}>✓</span>}
+      {status === 'wrong' && <span style={{ fontFamily: 'sans-serif' }}>✗</span>}
     </button>
   );
 });
@@ -155,20 +156,35 @@ const App = () => {
         </h2>
 
         <div className="answer-grid">
-          {currentQuestion.options.map((opt, i) => (
-            <AnswerButton 
-              key={`${currentIdx}-${i}`}
-              option={opt}
-              index={i}
-              status={selectedAnswer === i ? answerStatus : (answerStatus && i === currentQuestion.answer ? 'correct' : (answerStatus ? 'wrong' : null))}
-              onClick={handleAnswer}
-              disabled={!!answerStatus}
-            />
-          ))}
+          {currentQuestion.options.map((opt, i) => {
+            const isSelected = selectedAnswer === i;
+            const isCorrectAnswer = i === currentQuestion.answer;
+            let status = null;
+
+            if (answerStatus === 'correct' && isSelected) status = 'correct';
+            if (answerStatus === 'wrong' && isSelected) status = 'wrong';
+            if (answerStatus && isCorrectAnswer) status = 'correct';
+
+            return (
+              <AnswerButton 
+                key={`${currentIdx}-${i}`}
+                option={opt}
+                index={i}
+                status={status}
+                onClick={handleAnswer}
+                disabled={!!answerStatus}
+              />
+            );
+          })}
         </div>
 
         {answerStatus && (
           <div className="fact-box">
+             <div className={`feedback-badge ${answerStatus}`}>
+               {answerStatus === 'correct'
+                 ? 'Зөв хариулт! Сайхан байна.'
+                 : `Буруу хариулт. Зөв нь: ${currentQuestion.options[currentQuestion.answer]}`}
+             </div>
              <p style={{ fontSize: '1rem', lineHeight: 1.6 }}>
                {currentQuestion.fact}
              </p>

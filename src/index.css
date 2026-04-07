@@ -196,8 +196,9 @@ h1, h2, h3, .serif-text {
 }
 
 .answer-btn.wrong {
-  opacity: 0.5;
-  border-color: rgba(255,255,255,0.1);
+  background: rgba(180, 54, 54, 0.18);
+  border-color: rgba(255, 110, 110, 0.8);
+  color: #ffd6d6;
 }
 
 .answer-btn:disabled {
@@ -236,6 +237,28 @@ h1, h2, h3, .serif-text {
   font-family: var(--font-display);
   color: var(--text-secondary);
   animation: fadeUp 0.5s ease;
+}
+
+.feedback-badge {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.feedback-badge.correct {
+  color: #f7e39a;
+  background: rgba(212, 175, 55, 0.14);
+  border-color: rgba(212, 175, 55, 0.55);
+}
+
+.feedback-badge.wrong {
+  color: #ffd7d7;
+  background: rgba(180, 54, 54, 0.2);
+  border-color: rgba(255, 110, 110, 0.5);
 }
 
 /* Animations transition states */
