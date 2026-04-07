@@ -1,10 +1,12 @@
+import jazzAlbum from '../assets/jazz_album.png';
+
 export const questions = [
   {
     id: 1,
     question: "Контрабасс хөгжмийн хамгийн анхны өвөг хөгжмийг юу гэж нэрлэдэг вэ?",
     options: ["Viola da gamba", "Violone (виолоне)", "Cello", "Lute"],
     answer: 1,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Контрабасс нь XV зуунд Европт үүссэн бөгөөд түүний шууд өвөг нь виолоне юм."
   },
   {
@@ -12,7 +14,7 @@ export const questions = [
     question: "Контрабасс нь нотон дээр бичигдсэнээсээ хэдэн октаваар доогуур дуугардаг вэ?",
     options: ["Нэг октав", "Хоёр октав", "Хагас октав", "Нэг октав"],
     answer: 3,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Бичигдсэнээсээ нэг октаваар доогуур дуугардаг тул “контра-басс” гэж нэрлэдэг."
   },
   {
@@ -20,7 +22,7 @@ export const questions = [
     question: "“Контрабассын Паганини” гэж алдаршсан Италийн суут хөгжимчин хэн бэ?",
     options: ["Доменико Драгонетти", "Жованни Боттезини", "Серге Кусевицкий", "Антонио Вивальди"],
     answer: 1,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Боттезини контрабассыг хийл шиг уянгалаг, виртуоз тоглож чаддгаараа алдартай."
   },
   {
@@ -28,7 +30,7 @@ export const questions = [
     question: "Хөгжмийн түүхэнд аль үеийг контрабасс хөгжмийн “алтан үе” гэж нэрлэдэг вэ?",
     options: ["Барокко үе", "Сэргэн мандалтын үе", "Сонгодог үе (классицизм)", "Орчин үе"],
     answer: 2,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "1750–1820 оны хооронд Вена хотод контрабассад зориулсан 30 гаруй концерт бичигдсэн байдаг."
   },
   {
@@ -36,7 +38,7 @@ export const questions = [
     question: "20-р зуунаас өмнө контрабасс ихэвчлэн хэдэн чавхдастай байсан бэ?",
     options: ["2 чавхдас", "3 чавхдас", "4 чавхдас", "5 чавхдас"],
     answer: 1,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Илүү тод, хүчтэй дуугаргахын тулд эрт үед 3 чавхдастай хөгжмийг илүү өргөн ашигладаг байв."
   },
   {
@@ -44,7 +46,7 @@ export const questions = [
     question: "Жазз хөгжимд ашиглагддаг “алхаж буй мэт” хэмнэлтэй техникийг юу гэж нэрлэдэг вэ?",
     options: ["Walking bass", "Slap bass", "Tremolo", "Staccato"],
     answer: 0,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Walking bass нь жазз хөгжмийн суурь хэмнэлийг бүрдүүлдэг хамгийн чухал техник юм."
   },
   {
@@ -52,7 +54,7 @@ export const questions = [
     question: "Контрабасс нь хийл хөгжмөөс мөрний хэлбэрээрээ хэрхэн ялгардаг вэ?",
     options: ["Дугуй мөртэй", "Огцом налуу мөртэй", "Тэгш өнцөгт мөртэй", "Мөргүй"],
     answer: 1,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Тоглогч өндөр байрлалд тоглоход хялбар болгохын тулд налуу мөртэй хийгддэг."
   },
   {
@@ -60,7 +62,7 @@ export const questions = [
     question: "Контрабассын нумны үсийг ихэвчлэн юугаар хийдэг вэ?",
     options: ["Мяндас", "Синтетик утас", "Адууны хялгас", "Төмөр утас"],
     answer: 2,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Адууны хялгас нь канфоль (rosin)-ийг сайн тогтоодог тул хамгийн тохиромжтой материал болдог."
   },
   {
@@ -68,7 +70,7 @@ export const questions = [
     question: "Доменико Драгонетти аль суут хөгжмийн зохиолчтой уулзаж, түүний бүтээлүүдэд нөлөөлсөн бэ?",
     options: ["Моцарт", "Людвиг ван Бетховен", "Бах", "Шуберт"],
     answer: 1,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Бетховен Драгонеттигийн ур чадварыг биширч, өөрийн симфониудад хүчирхэг басс хэсгүүдийг оруулсан."
   },
   {
@@ -76,7 +78,7 @@ export const questions = [
     question: "Контрабассыг шалан дээр тогтоож, өндрийг нь тохируулдаг төмөр шонг юу гэж нэрлэдэг вэ?",
     options: ["Bridge (гүүр)", "Scroll (толгой)", "Endpin (шон)", "Peg (чих)"],
     answer: 2,
-    image: "/src/assets/jazz_album.png",
+    image: jazzAlbum,
     fact: "Endpin нь хөгжмийн өндрийг хөгжимчний биед тохируулан тааруулах зориулалттай."
   }
 ];
